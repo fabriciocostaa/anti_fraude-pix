@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pix Transaction",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "amount": { "type": "integer", "minimum": 1 },
+    "transaction_date": { "type": "string", "format": "date-time" },
+    "source_account": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "object",
+          "properties": { "document_number": { "type": "string" } },
+          "required": ["document_number"]
+        }
+      },
+      "required": ["owner"]
+    },
+    "destination_account": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "object",
+          "properties": { "document_number": { "type": "string" } },
+          "required": ["document_number"]
+        }
+      },
+      "required": ["owner"]
+    },
+    "source": {
+      "type": "object",
+      "properties": { "device_id": { "type": "string" } }
+    }
+  },
+  "required": ["id", "amount", "transaction_date", "source_account", "destination_account"]
+}
