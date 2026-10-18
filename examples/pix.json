@@ -1,0 +1,27 @@
+{
+  "id": "pix-exemplo-001",
+  "amount": 150000,
+  "transaction_date": "2026-10-18T12:00:00-03:00",
+  "source_account": {
+    "branch": "0001",
+    "account_number": "88213",
+    "opening_date": "2010-01-01T00:00:00-03:00",
+    "owner": {
+      "document_number": "12345678904"
+    }
+  },
+  "destination_account": {
+    "participant": "60701190",
+    "branch": "3675",
+    "account_number": "10442",
+    "opening_date": "2010-01-01T00:00:00-03:00",
+    "owner": {
+      "document_number": "98765432100"
+    }
+  },
+  "source": {
+    "device_id": "dvc-exemplo",
+    "channel": "app",
+    "ip": "198.51.100.23"
+  }
+}

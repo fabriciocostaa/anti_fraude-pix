@@ -12,13 +12,6 @@ class PayloadGenerator:
         document_number: str = None,
         birthdate: str = None,
     ) -> dict:
-        """Um cadastro valido, com qualquer campo trocado a pedido.
-
-        Sem argumento nenhum o payload sai aleatorio no que precisa ser
-        unico (e-mail e CPF), pra que dois cadastros seguidos nao batam
-        na regra de duplicidade. Quem testa FILTRO precisa do contrario
-        disso: um valor conhecido, pra poder procurar por ele depois.
-        """
         if hello is None:
             hello = "world"
 

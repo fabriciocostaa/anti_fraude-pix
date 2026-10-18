@@ -1,4 +1,3 @@
-from src.models.pix_transaction_status_event import SampleEntityStatus
-from src.models.pix_transaction import PixTransaction
-from src.models.pix_analysis_status import PixAnalysisStatus
-from src.models.pix_transaction_status_event import PixTransactionStatusEvent
+from models.pix_analysis_status import PixAnalysisStatus
+from models.pix_transaction import PixTransaction
+from models.pix_transaction_status_event import PixTransactionStatusEvent
