@@ -10,7 +10,6 @@ class PixTransactionRepository:
         self.session = context.db_session
 
     def lock(self, identity):
-        # Transacional, entre processos, inclusive quando ainda nao existe linha.
         self.session.execute(text("SELECT pg_advisory_xact_lock(hashtextextended(:identity, 0))"), {"identity": identity})
 
     def get_by_pix_id(self, pix_id):
@@ -36,21 +35,23 @@ class PixTransactionRepository:
 
     def create(self, payload, raw_payload, payload_hash, status, metadata, received_at, evaluated_at, income, income_consulted_at):
         source, destination, origin = payload["source_account"], payload["destination_account"], payload["source"]
-        geo = origin.get("geolocation", {})
         status_row = self.session.query(PixAnalysisStatus).filter_by(enumerator=status).one()
         transaction = PixTransaction(
-            analysis_key=str(uuid4()), pix_id=payload["id"], status_id=status_row.id,
-            amount=payload["amount"], transaction_date=datetime.fromisoformat(payload["transaction_date"]),
-            received_at=received_at, evaluated_at=evaluated_at,
-            source_document=source["owner"]["document_number"], source_branch=source["branch"],
-            source_account_number=source["account_number"], source_opening_date=datetime.fromisoformat(source["opening_date"]),
-            destination_document=destination["owner"]["document_number"], destination_participant=destination["participant"],
-            destination_branch=destination["branch"], destination_account_number=destination["account_number"],
-            destination_opening_date=datetime.fromisoformat(destination["opening_date"]),
-            device_id=origin["device_id"], channel=origin["channel"], ip=origin["ip"],
-            latitude=geo.get("latitude"), longitude=geo.get("longitude"),
-            declared_income=income, income_consulted_at=income_consulted_at,
-            payload_hash=payload_hash, transaction_data=raw_payload,
+            analysis_key=str(uuid4()),
+            pix_id=payload["id"],
+            status_id=status_row.id,
+            amount=payload["amount"],
+            transaction_date=datetime.fromisoformat(payload["transaction_date"]),
+            received_at=received_at,
+            source_branch=source["branch"],
+            source_account_number=source["account_number"],
+            source_document=source["owner"]["document_number"],
+            destination_document=destination["owner"]["document_number"],
+            device_id=origin["device_id"],
+            declared_income=income,
+            income_consulted_at=income_consulted_at,
+            payload_hash=payload_hash,
+            transaction_data=raw_payload,
             analysis_metadata=metadata,
         )
         self.session.add(transaction)

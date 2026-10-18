@@ -18,21 +18,11 @@ CREATE TABLE pix_transaction(
     amount BIGINT NOT NULL,
     transaction_date TIMESTAMPTZ NOT NULL,
     received_at TIMESTAMPTZ NOT NULL,
-    evaluated_at TIMESTAMPTZ NOT NULL,
     source_branch VARCHAR(20) NOT NULL,
     source_account_number VARCHAR(50) NOT NULL,
-    source_opening_date TIMESTAMPTZ NOT NULL,
     source_document VARCHAR(20) NOT NULL,
-    destination_participant VARCHAR(20) NOT NULL,
-    destination_branch VARCHAR(20) NOT NULL,
-    destination_account_number VARCHAR(50) NOT NULL,
-    destination_opening_date TIMESTAMPTZ NOT NULL,
     destination_document VARCHAR(20) NOT NULL,
     device_id VARCHAR(255) NOT NULL,
-    channel VARCHAR(50) NOT NULL,
-    ip VARCHAR(45) NOT NULL,
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
     declared_income VARCHAR(100),
     income_consulted_at TIMESTAMPTZ,
     payload_hash CHAR(64) NOT NULL,
@@ -49,8 +39,8 @@ ON pix_transaction(source_account_number, status_id, transaction_date DESC, id D
 CREATE INDEX idx_pix_tx_source_acc_device
 ON pix_transaction(source_account_number, device_id);
 
-CREATE INDEX idx_pix_tx_source_dest_acc
-ON pix_transaction(source_account_number, destination_account_number);
+CREATE INDEX idx_pix_tx_source_dest_doc
+ON pix_transaction(source_document, destination_document);
 
 CREATE INDEX idx_pix_tx_source_doc_received
 ON pix_transaction(source_document, received_at DESC, id DESC);
