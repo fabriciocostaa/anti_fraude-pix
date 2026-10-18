@@ -14,6 +14,10 @@ SERVICE_NAME = os.environ.get("SERVICE_NAME", "bootcamp-api")
 DATABASE_URL = os.environ.get("DATABASE_URL")
 INTERNAL_TOKEN = os.environ.get("INTERNAL_TOKEN")
 
+SERASA_API_URL = os.environ.get("SERASA_API_URL", "http://serasa_mock:8080")
+DICT_API_URL = os.environ.get("DICT_API_URL", "http://dict_mock:8080")
+EXTERNAL_TIMEOUT = float(os.environ.get("EXTERNAL_TIMEOUT", "2"))
+
 # A API de boletos: o serviço de fora que este projeto chama pra emitir
 # uma cobrança (veja src/connectors/). O endereço vem do ambiente, como
 # tudo aqui — na sua máquina ele aponta pro mock server do sábado 4; em

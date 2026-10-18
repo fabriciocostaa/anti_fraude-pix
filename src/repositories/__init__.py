@@ -1,1 +1,1 @@
-from pix_transaction_repository import PixTransactionRepository
+from repositories.pix_transaction_repository import PixTransactionRepository

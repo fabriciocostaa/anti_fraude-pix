@@ -2,7 +2,7 @@ import functools
 import json
 import os
 
-from jsonschema import RefResolver, ValidationError, validate
+from jsonschema import FormatChecker, RefResolver, ValidationError, validate
 
 from constants import SCHEMA_PATH
 from errors import InvalidSchema
@@ -108,7 +108,7 @@ class SchemaHandler:
                 resolver = RefResolver(f"file://{SCHEMA_PATH}/", None)
 
                 try:
-                    validate(kwargs["payload"], schema, resolver=resolver)
+                    validate(kwargs["payload"], schema, resolver=resolver, format_checker=FormatChecker())
                 except ValidationError as error:
                     raise InvalidSchema(describe_schema_error(error))
 
