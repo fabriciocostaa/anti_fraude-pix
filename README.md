@@ -43,11 +43,9 @@ São serviços locais de demonstração, sem conexão ao Serasa ou ao Banco Cent
 
 **Serasa:** `GET /income/{document}` devolve `{"income":"Mais de R$ 2500,00 a R$ 3000,00"}`. A primeira análise sem renda armazenada consulta o mock; análises seguintes reutilizam uma faixa válida persistida, inclusive de rejeições ou 2FA. O instante original da consulta é preservado. Se a consulta falhar ou não houver renda válida, usa-se a política inicial e tenta-se novamente na próxima análise. Não há atualização automática de uma faixa já armazenada neste MVP.
 
-As 18 faixas ficam em `src/income_ranges.json`. Os últimos dois dígitos, de 00 a 17, selecionam a faixa na ordem informada; demais finais usam o resto da divisão por 18. Final 04 corresponde a R$2.500–3.000; 14, R$20.000–25.000; 17, acima de R$35.000; 98 não tem renda e 99 simula HTTP 503.
+As 18 faixas ficam em `mocks/income_ranges.json`. Os últimos dois dígitos, de 00 a 17, selecionam a faixa na ordem informada; demais finais usam o resto da divisão por 18. Final 04 corresponde a R$2.500–3.000; 14, R$20.000–25.000; 17, acima de R$35.000; 98 não tem renda e 99 simula indisponibilidade.
 
-**DICT:** `GET /fraud-markers/{document}` devolve `{"fraud_marker":null}` ou um objeto com `tax_id_number`, `status` e `fraud_type`. Cada Pix novo consulta o recebedor antes de qualquer resultado de negócio, inclusive quando acaba rejeitado. Finais: 01 = MULE_ACCOUNT REGISTERED; 02 = MULE_ACCOUNT CANCELLED; 03 = OTHER REGISTERED; 97 = corpo inválido; 98 = documento divergente; 99 = HTTP 503; outros = nenhuma marcação. A regra de rejeição deste MVP usa especificamente MULE_ACCOUNT ativo, não todas as categorias de marcação.
-
-Esse endpoint JSON por documento é uma fachada do nosso mock. No DICT oficial, getFraudMarker exige o ID da marcação, e o contrato é XML; não é uma implementação compatível da API oficial. Os mocks expõem `GET /calls/{document}` exclusivamente para os testes verificarem reutilização de renda e novas consultas DICT.
+**DICT:** Devolve `None` ou um objeto com `tax_id_number`, `status` e `fraud_type`. Cada Pix novo consulta o recebedor antes de qualquer resultado de negócio, inclusive quando acaba rejeitado. Finais: 01 = MULE_ACCOUNT REGISTERED; 02 = MULE_ACCOUNT CANCELLED; 03 = OTHER REGISTERED; 97 = corpo inválido; 98 = documento divergente; 99 = indisponível (HTTP 503 na API); outros = nenhuma marcação. A regra de rejeição deste MVP usa especificamente MULE_ACCOUNT ativo, não todas as categorias de marcação.
 
 ## Regras e precedência
 

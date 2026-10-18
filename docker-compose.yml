@@ -76,4 +76,3 @@ services:
 
 volumes:
   pix_pgdata:
-

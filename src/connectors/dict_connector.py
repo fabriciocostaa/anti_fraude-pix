@@ -19,8 +19,8 @@ class DictConnector(RestConnector):
         marker = data["fraud_marker"]
         if marker is None:
             return None
-        if (not isinstance(marker, dict) or marker.get("tax_id_number") != document
+        if (not isinstance(marker, dict) or str(marker.get("tax_id_number")) != str(document)
                 or marker.get("status") not in {"REGISTERED", "CANCELLED"}
                 or marker.get("fraud_type") not in {"MULE_ACCOUNT", "APPLICATION_FRAUD", "SCAMMER_ACCOUNT", "OTHER", "UNKNOWN"}):
             raise DependencyUnavailable("dict_mock")
-        return {key: marker[key] for key in ("tax_id_number", "status", "fraud_type")}
+        return {"tax_id_number": str(marker["tax_id_number"]), "status": marker["status"], "fraud_type": marker["fraud_type"]}

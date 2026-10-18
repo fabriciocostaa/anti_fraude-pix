@@ -39,7 +39,7 @@ class PixTransactionRepository:
         geo = origin.get("geolocation", {})
         status_row = self.session.query(PixAnalysisStatus).filter_by(enumerator=status).one()
         transaction = PixTransaction(
-            analysis_key=uuid4(), pix_id=payload["id"], status_id=status_row.id,
+            analysis_key=str(uuid4()), pix_id=payload["id"], status_id=status_row.id,
             amount=payload["amount"], transaction_date=datetime.fromisoformat(payload["transaction_date"]),
             received_at=received_at, evaluated_at=evaluated_at,
             source_document=source["owner"]["document_number"], source_branch=source["branch"],
@@ -47,11 +47,11 @@ class PixTransactionRepository:
             destination_document=destination["owner"]["document_number"], destination_participant=destination["participant"],
             destination_branch=destination["branch"], destination_account_number=destination["account_number"],
             destination_opening_date=datetime.fromisoformat(destination["opening_date"]),
-            device_id=origin["device_id"], channel=origin["channel"], source_ip=origin["ip"],
+            device_id=origin["device_id"], channel=origin["channel"], ip=origin["ip"],
             latitude=geo.get("latitude"), longitude=geo.get("longitude"),
             declared_income=income, income_consulted_at=income_consulted_at,
-            raw_payload=raw_payload, payload_hash=payload_hash, policy_version=metadata["policy_version"],
-            decision_metadata=metadata,
+            payload_hash=payload_hash, transaction_data=raw_payload,
+            analysis_metadata=metadata,
         )
         self.session.add(transaction)
         self.session.flush()

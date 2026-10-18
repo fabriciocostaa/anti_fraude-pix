@@ -1,0 +1,8 @@
+{
+  "fraud_marker": {
+    "tax_id_number": "12345678901",
+    "status": "REGISTERED",
+    "fraud_type": "MULE_ACCOUNT"
+  }
+}
+

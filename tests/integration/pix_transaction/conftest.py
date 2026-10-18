@@ -5,6 +5,8 @@ from datetime import datetime, timedelta, timezone
 import pytest
 import requests
 
+MULE_DOCUMENT = "12345678901"
+
 
 @pytest.fixture
 def api_url():
@@ -28,10 +30,22 @@ def payload(document):
     def make(amount=10000, source=None, destination=None, hour=12, **changes):
         now = datetime.now(timezone(timedelta(hours=-3))).replace(hour=hour, minute=0, second=0, microsecond=0)
         body = {
-            "id": f"pix-{uuid.uuid4()}", "amount": amount,
+            "id": f"pix-{uuid.uuid4()}",
+            "amount": amount,
             "transaction_date": now.isoformat(),
-            "source_account": {"branch": "0001", "account_number": "88213", "opening_date": "2010-01-01T00:00:00-03:00", "owner": {"document_number": source or document()}},
-            "destination_account": {"participant": "60701190", "branch": "3675", "account_number": "10442", "opening_date": "2010-01-01T00:00:00-03:00", "owner": {"document_number": destination or document("00")}},
+            "source_account": {
+                "branch": "0001",
+                "account_number": "88213",
+                "opening_date": "2010-01-01T00:00:00-03:00",
+                "owner": {"document_number": source or document()},
+            },
+            "destination_account": {
+                "participant": "60701190",
+                "branch": "3675",
+                "account_number": "10442",
+                "opening_date": "2010-01-01T00:00:00-03:00",
+                "owner": {"document_number": destination or document("00")},
+            },
             "source": {"device_id": "test-device", "channel": "app", "ip": "198.51.100.23"},
         }
         body.update(changes)
@@ -55,3 +69,4 @@ def get(api_url, headers):
         assert response.status_code == expected, response.text
         return response.json()
     return send
+

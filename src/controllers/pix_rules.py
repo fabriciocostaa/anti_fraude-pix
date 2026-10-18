@@ -1,7 +1,7 @@
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from fractions import Fraction
-from utils.income import INCOME_BY_LABEL
+from utils.income import parse_income_band
 
 POLICY_VERSION = "pix-mvp-v1"
 BRASILIA = timezone(timedelta(hours=-3))
@@ -33,7 +33,7 @@ def evaluate(payload, history, declared_income, marker, now):
         daily_totals[row["received_at"].astimezone(BRASILIA).date()] += row["amount"]
     day_total = daily_totals.get(today, 0)
     count = 1 + sum(row["received_at"] >= now - timedelta(seconds=60) for row in history)
-    income_band = INCOME_BY_LABEL.get(declared_income)
+    income_band = parse_income_band(declared_income)
     if profile_ready:
         full_days = [total for day, total in daily_totals.items() if today - timedelta(days=30) < day < today]
         reference = {"mode": "history", "amount_threshold": int(FACTOR * median([r["amount"] for r in approved])),

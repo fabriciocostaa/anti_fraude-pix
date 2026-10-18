@@ -1,4 +1,4 @@
-"""Mocks de demonstracao. Nao conectam ao Serasa ou ao Banco Central."""
+"""Mocks de demonstracao para Serasa e DICT."""
 import json
 import os
 import re
@@ -10,10 +10,9 @@ from urllib.parse import urlparse
 
 PROVIDER = os.environ.get("MOCK_PROVIDER", "serasa")
 TOKEN = os.environ.get("INTERNAL_TOKEN", "default_token")
-RANGES_PATH = Path(__file__).resolve().parent / "income_ranges.json"
-if not RANGES_PATH.exists():
-    RANGES_PATH = Path(__file__).resolve().parents[1] / "src" / "income_ranges.json"
-RANGES = json.loads(RANGES_PATH.read_text(encoding="utf-8"))
+BASE_DIR = Path(__file__).resolve().parent
+SERASA_DATA = json.loads((BASE_DIR / "serasa.json").read_text(encoding="utf-8"))
+DICT_DATA = json.loads((BASE_DIR / "dict.json").read_text(encoding="utf-8"))
 CALLS = Counter()
 LOCK = threading.Lock()
 
@@ -45,20 +44,12 @@ class Handler(BaseHTTPRequestHandler):
             return self.respond(404, {"error": "not_found"})
         with LOCK:
             CALLS[document] += 1
-        suffix = int(document[-2:])
-        if suffix == 99:
-            return self.respond(503, {"error": "simulated_unavailable"})
         if PROVIDER == "serasa":
-            income = None if suffix == 98 else RANGES[suffix % len(RANGES)]["label"]
-            return self.respond(200, {"income": income})
-        if suffix == 97:
-            return self.respond(200, {"unexpected": True})
-        marker = None
-        if suffix in (1, 2, 3, 98):
-            marker = {"tax_id_number": "00000000000" if suffix == 98 else document,
-                      "status": "CANCELLED" if suffix == 2 else "REGISTERED",
-                      "fraud_type": "OTHER" if suffix == 3 else "MULE_ACCOUNT"}
-        return self.respond(200, {"fraud_marker": marker})
+            return self.respond(200, SERASA_DATA)
+        marker = DICT_DATA.get("fraud_marker")
+        if marker and str(marker.get("tax_id_number")) == str(document):
+            return self.respond(200, {"fraud_marker": marker})
+        return self.respond(200, {"fraud_marker": None})
 
     def log_message(self, format, *args):
         pass
@@ -66,3 +57,4 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     ThreadingHTTPServer(("0.0.0.0", int(os.environ.get("PORT", "8080"))), Handler).serve_forever()
+

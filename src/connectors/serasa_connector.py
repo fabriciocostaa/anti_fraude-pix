@@ -1,7 +1,7 @@
 import requests
 from connectors.rest_connector import RestConnector
 from constants import SERASA_API_URL, EXTERNAL_TIMEOUT, INTERNAL_TOKEN
-from utils.income import INCOME_BY_LABEL
+from utils.income import parse_income_band
 
 
 class SerasaConnector(RestConnector):
@@ -16,4 +16,4 @@ class SerasaConnector(RestConnector):
         if response.status != 200 or not isinstance(response.json, dict):
             return None
         label = response.json.get("income")
-        return label if isinstance(label, str) and label in INCOME_BY_LABEL else None
+        return label if parse_income_band(label) else None
