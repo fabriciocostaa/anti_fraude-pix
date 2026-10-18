@@ -1,4 +1,3 @@
-"""Mocks de demonstracao para Serasa e DICT."""
 import json
 import os
 import re

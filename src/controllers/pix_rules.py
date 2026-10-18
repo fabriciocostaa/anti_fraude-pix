@@ -39,7 +39,6 @@ def evaluate(payload, history, declared_income, marker, now):
         reference = {"mode": "history", "amount_threshold": int(FACTOR * median([r["amount"] for r in approved])),
                      "daily_threshold": int(FACTOR * median(full_days))}
     elif income_band:
-        # Na faixa aberta, o piso e referencia conservadora; nao e renda exata.
         basis = income_band["upper_cents"] or income_band["lower_cents"]
         reference = {"mode": "income", "income_reference": basis,
                      "open_income_band": income_band["upper_cents"] is None,

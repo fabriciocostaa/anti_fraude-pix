@@ -22,7 +22,6 @@ class PixTransactionController(BaseController):
         document = normalized["source_account"]["owner"]["document_number"]
         receiver = normalized["destination_account"]["owner"]["document_number"]
         try:
-            # Sempre nesta ordem: ID global, depois pagador. Commit libera ambos.
             self.repository.lock("pix:" + normalized["id"])
             existing = self.repository.get_by_pix_id(normalized["id"])
             if existing:
@@ -39,7 +38,6 @@ class PixTransactionController(BaseController):
                 income_consulted_at = datetime.now(timezone.utc) if income else None
                 income_source = "serasa_mock" if income else "unavailable"
 
-            # Toda analise nova consulta o recebedor; se falhar, o Controller recusa.
             dict_ok, marker = self.dict_connector.get_fraud_marker(receiver)
             if not dict_ok:
                 raise DependencyUnavailable("dict_mock")
